@@ -1,0 +1,329 @@
+Option Explicit
+
+'This Application is used to extract the necessary documents
+'for a tract from the larger subset of the documents indexed
+'against an entire section in the Jeffersonian Land Survey System.
+'This application launches a user form used to select the quarterquarter
+'aliquots the user is interested in, then the application
+'runs through the index and compiles a list of the documents
+'indexed against the entered aliquots
+
+
+
+'First Create a vector used as an index for the required
+'Quarter-Quarters of the Section, there will need to be 16 places
+
+Dim reqQtrQtrs(1 To 16) As Boolean
+
+'When the user clicks the export button run through the index and gather the pertinent line items
+
+Private Sub cbExport_Click()
+Dim wsSource As Worksheet
+Set wsSource = ThisWorkbook.Sheets("Index") 'Locate the Index sheet
+Dim wsDestination As Worksheet
+Dim wb As Workbook ' New Workbook to be populated and saved
+Dim iRowCount As Integer ' number of rows in the index
+Dim destRowCounter As Integer
+Dim rowCounter As Integer
+Dim qtrqtr
+
+
+' Determine the number of rows in Index
+With wsSource
+    iRowCount = .Cells(.Rows.Count, "D").End(xlUp).Row
+End With
+
+
+'Create the output workbook
+Set wb = Workbooks.Add
+Set wsDestination = wb.Sheets(1)
+
+'Copy the header from the index template to the new workbook/worksheet
+wsSource.Range("A2:J2").Copy wsDestination.Range("A1")
+destRowCounter = 2
+
+'Nested for loops to determine if the document on each line is indexed against
+'the subject lands. rowCounter searches each row, while qtrqtr searches through the
+'index vector of desired quarter-quarters.
+
+'Start looking at row 3, below the headers and search to the end
+For rowCounter = 3 To iRowCount
+    'For each row, check to see if the indexed aliquots include the user input lands
+    For qtrqtr = 1 To 16
+        If reqQtrQtrs(qtrqtr) = True And wsSource.Cells(rowCounter, 10 + qtrqtr).Value2 = 1 Then
+            wsSource.Range(wsSource.Cells(rowCounter, 1), wsSource.Cells(rowCounter, 10)).Copy wsDestination.Range(wsDestination.Cells(destRowCounter, 1), wsDestination.Cells(destRowCounter, 10))
+            destRowCounter = destRowCounter + 1 'bump to the next row in the destination workbook
+        End If
+    Next qtrqtr
+Next rowCounter
+
+'Format the destination worksheet
+
+wsDestination.Columns("A:J").AutoFit
+'Remove duplicate entries
+wsDestination.Range("A3", wsDestination.Cells(destRowCounter, 10)).RemoveDuplicates Columns:=4, Header:=xlYes
+'Prompt the user to select the file path and rename destination file
+Application.Dialogs(xlDialogSaveAs).Show
+
+Unload frmSectionExport
+
+End Sub
+
+Sub cbNENE_Click()
+'If the user clicks the NENE command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+
+    If cbNENE.BackColor = &HFFFF& Then
+        cbNENE.BackColor = &H8000000F
+        reqQtrQtrs(1) = False
+    ElseIf cbNENE.BackColor = &H8000000F Then
+        cbNENE.BackColor = &HFFFF&
+        reqQtrQtrs(1) = True
+    End If
+
+End Sub
+
+
+Sub cbNWNE_Click()
+'If the user clicks the NWNE command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+
+    If cbNWNE.BackColor = &HFFFF& Then
+        cbNWNE.BackColor = &H8000000F
+        reqQtrQtrs(2) = False
+    ElseIf cbNWNE.BackColor = &H8000000F Then
+        cbNWNE.BackColor = &HFFFF&
+        reqQtrQtrs(2) = True
+    End If
+
+End Sub
+
+
+Sub cbSWNE_Click()
+'If the user clicks the SWNE command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+
+    If cbSWNE.BackColor = &HFFFF& Then
+        cbSWNE.BackColor = &H8000000F
+        reqQtrQtrs(3) = False
+    ElseIf cbSWNE.BackColor = &H8000000F Then
+        cbSWNE.BackColor = &HFFFF&
+        reqQtrQtrs(3) = True
+    End If
+
+End Sub
+
+Sub cbSENE_Click()
+
+'If the user clicks the SENE command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+
+    If cbSENE.BackColor = &HFFFF& Then
+        cbSENE.BackColor = &H8000000F
+        reqQtrQtrs(4) = False
+    ElseIf cbSENE.BackColor = &H8000000F Then
+        cbSENE.BackColor = &HFFFF&
+        reqQtrQtrs(4) = True
+    End If
+
+End Sub
+
+
+Sub cbNENW_Click()
+'If the user clicks the NENW command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+
+    If cbNENW.BackColor = &HFFFF& Then
+        cbNENW.BackColor = &H8000000F
+        reqQtrQtrs(5) = False
+    ElseIf cbNENW.BackColor = &H8000000F Then
+        cbNENW.BackColor = &HFFFF&
+        reqQtrQtrs(5) = True
+    End If
+
+End Sub
+
+Sub cbNWNW_Click()
+'If the user clicks the NWNW command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+
+    If cbNWNW.BackColor = &HFFFF& Then
+        cbNWNW.BackColor = &H8000000F
+        reqQtrQtrs(6) = False
+    ElseIf cbNWNW.BackColor = &H8000000F Then
+        cbNWNW.BackColor = &HFFFF&
+        reqQtrQtrs(6) = True
+    End If
+
+End Sub
+
+Sub cbSWNW_Click()
+'If the user clicks the SWNW command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+    
+    If cbSWNW.BackColor = &HFFFF& Then
+        cbSWNW.BackColor = &H8000000F
+        reqQtrQtrs(7) = False
+    ElseIf cbSWNW.BackColor = &H8000000F Then
+        cbSWNW.BackColor = &HFFFF&
+        reqQtrQtrs(7) = True
+    End If
+
+End Sub
+
+Sub cbSENW_Click()
+'If the user clicks the SENW command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+
+    If cbSENW.BackColor = &HFFFF& Then
+        cbSENW.BackColor = &H8000000F
+        reqQtrQtrs(8) = False
+    ElseIf cbSENW.BackColor = &H8000000F Then
+        cbSENW.BackColor = &HFFFF&
+        reqQtrQtrs(8) = True
+    End If
+
+End Sub
+
+Sub cbNESW_Click()
+'If the user clicks the NESW command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+
+    If cbNESW.BackColor = &HFFFF& Then
+        cbNESW.BackColor = &H8000000F
+        reqQtrQtrs(9) = False
+    ElseIf cbNESW.BackColor = &H8000000F Then
+        cbNESW.BackColor = &HFFFF&
+        reqQtrQtrs(9) = True
+    End If
+
+End Sub
+
+Sub cbNWSW_Click()
+'If the user clicks the NWSW command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+
+    If cbNWSW.BackColor = &HFFFF& Then
+        cbNWSW.BackColor = &H8000000F
+        reqQtrQtrs(10) = False
+    ElseIf cbNWSW.BackColor = &H8000000F Then
+        cbNWSW.BackColor = &HFFFF&
+        reqQtrQtrs(10) = True
+    End If
+
+End Sub
+
+Sub cbSWSW_Click()
+'If the user clicks the SWSW command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+
+    If cbSWSW.BackColor = &HFFFF& Then
+        cbSWSW.BackColor = &H8000000F
+        reqQtrQtrs(11) = False
+    ElseIf cbSWSW.BackColor = &H8000000F Then
+        cbSWSW.BackColor = &HFFFF&
+        reqQtrQtrs(11) = True
+    End If
+
+End Sub
+
+Sub cbSESW_Click()
+'If the user clicks the SESW command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+    If cbSESW.BackColor = &HFFFF& Then
+        cbSESW.BackColor = &H8000000F
+        reqQtrQtrs(12) = False
+    ElseIf cbSESW.BackColor = &H8000000F Then
+        cbSESW.BackColor = &HFFFF&
+        reqQtrQtrs(12) = True
+    End If
+
+End Sub
+
+Sub cbNESE_Click()
+'If the user clicks the NESE command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+
+    If cbNESE.BackColor = &HFFFF& Then
+        cbNESE.BackColor = &H8000000F
+        reqQtrQtrs(13) = False
+    ElseIf cbNESE.BackColor = &H8000000F Then
+        cbNESE.BackColor = &HFFFF&
+        reqQtrQtrs(13) = True
+    End If
+
+End Sub
+
+Sub cbNWSE_Click()
+'If the user clicks the NWSE command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+
+    If cbNWSE.BackColor = &HFFFF& Then
+        cbNWSE.BackColor = &H8000000F
+        reqQtrQtrs(14) = False
+    ElseIf cbNWSE.BackColor = &H8000000F Then
+        cbNWSE.BackColor = &HFFFF&
+        reqQtrQtrs(14) = True
+    End If
+
+End Sub
+
+Sub cbSWSE_Click()
+'If the user clicks the SWSE command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+
+    If cbSWSE.BackColor = &HFFFF& Then
+        cbSWSE.BackColor = &H8000000F
+        reqQtrQtrs(15) = False
+    ElseIf cbSWSE.BackColor = &H8000000F Then
+        cbSWSE.BackColor = &HFFFF&
+        reqQtrQtrs(15) = True
+    End If
+
+End Sub
+
+Sub cbSESE_Click()
+'If the user clicks the SESE command button, change the background color
+'to make it clear that they have selected this button, also update the index vector for that quarter-quarter
+'If the user has already selected the quarter-quarter and wishes to de-select it, change the color back to default
+'and update the index vector accordingly
+
+    If cbSESE.BackColor = &HFFFF& Then
+        cbSESE.BackColor = &H8000000F
+        reqQtrQtrs(16) = False
+    ElseIf cbSESE.BackColor = &H8000000F Then
+        cbSESE.BackColor = &HFFFF&
+        reqQtrQtrs(16) = True
+    End If
+
+End Sub
