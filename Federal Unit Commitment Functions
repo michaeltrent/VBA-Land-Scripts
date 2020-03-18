@@ -1,0 +1,133 @@
+Option Explicit
+
+Function list_tracts(entity As String, ent_type As String) As String
+    Dim tracts As Variant
+    Dim num_ents As Double
+    Dim i As Single
+    Dim n As Single
+    Dim sheet_ent As String
+        
+    'MsgBox ("You're In!")
+    'MsgBox (ent_type)
+    list_tracts = ""
+    With wsData.Range("B1")
+            num_ents = Range(.Offset(0, 0), .End(xlDown)).Rows.Count
+    End With
+    'MsgBox (num_ents)
+    If ent_type = "WI" Then
+        'MsgBox ("You're in the If")
+        n = 1
+        ReDim tracts(1 To n)
+        With wsData.Range("B1")
+            For i = 1 To num_ents
+                sheet_ent = .Offset(i, 7).Value
+                'MsgBox (sheet_ent)
+                If sheet_ent = entity Then
+                    'MsgBox ("You're in the if-->if")
+                    tracts(n) = .Offset(i, 0).Value
+                    'MsgBox (tracts(n))
+                    If n = 1 Then
+                        list_tracts = tracts(n)
+                    Else
+                        list_tracts = list_tracts & ", " & tracts(n)
+                        
+                    End If
+                    n = n + 1
+                    ReDim Preserve tracts(1 To n)
+                End If
+            Next
+            
+        End With
+        Else
+        MsgBox ("You're in the Else")
+        With wsData.Range("B1")
+            num_ents = Range(.Offset(0, 0), .End(xlDown)).Rows.Count
+            list_tracts = num_ents
+            MsgBox (num_ents)
+        End With
+    End If
+    'MsgBox (tracts)
+    'MsgBox ("You're out of the If loop...")
+    'ReDim list_tracts(1 To tracts)
+    'list_tracts = tracts
+    
+End Function
+
+
+Function tract_stat(tract As String) As Variant
+    Dim tracts As Variant
+    Dim num_tracts As Single
+    Dim i As Single
+    Dim n As Single
+    Dim m As Single
+    tract_stat = ""
+    n = 0
+    m = 0
+    With wsData.Range("B1")
+            num_tracts = Range(.Offset(0, 0), .End(xlDown)).Rows.Count
+    End With
+    'MsgBox (num_tracts)
+    For i = 1 To num_tracts
+        If wsData.Range("B1").Offset(i, 0).Value = tract Then
+            
+            If wsData.Range("J1").Offset(i, 0).Value = "N" Then
+                tract_stat = "Out"
+                Exit Function
+            
+            Else
+                tract_stat = "Potential"
+            End If
+        End If
+    Next
+    
+    For i = 1 To num_tracts
+        If wsData.Range("B1").Offset(i, 0).Value = tract Then
+            m = m + 1
+            'MsgBox (n & i)
+            If wsData.Range("J1").Offset(i, 0).Value = "Y" Then
+                n = n + 1
+            Else
+                tract_stat = "Potential"
+            End If
+        End If
+    Next
+'MsgBox (m & ", " & n)
+
+If m = n Then
+            tract_stat = "Committed"
+End If
+
+End Function
+
+Function action_stat(entity) As String
+
+    Dim tracts As Variant
+    Dim num_tracts As Single
+    Dim i As Single
+
+    action_stat = ""
+
+    With wsData.Range("B1")
+            num_tracts = Range(.Offset(0, 0), .End(xlDown)).Rows.Count
+    End With
+    
+    For i = 1 To num_tracts
+        If wsData.Range("I1").Offset(i, 0).Value = entity Then
+            
+            If wsData.Range("J1").Offset(i, 0).Value = "N" Then
+                action_stat = "Declined"
+                Exit Function
+            ElseIf wsData.Range("J1").Offset(i, 0).Value = "Y" Then
+                action_stat = "Do not work - Already committed"
+                Exit Function
+            ElseIf wsData.Range("K1").Offset(i, 0).Value = "Potential" Then
+                action_stat = "Working"
+                Exit Function
+            Else
+                action_stat = "Do not work - all tracts out"
+            End If
+        End If
+    Next
+
+
+End Function
